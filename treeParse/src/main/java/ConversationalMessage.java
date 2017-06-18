@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * @author mathemage <ha@h2o.ai>
@@ -13,18 +12,6 @@ public class ConversationalMessage {
 	public ConversationalMessage(String text, boolean isLastInConversation) {
 		this.text = text;
 		this.isLastInConversation = isLastInConversation;
-	}
-	
-	public static void appendMessageToHistory(String line, Map<Integer, ConversationalMessage> conversationalHistory) {
-		int indexOfLast = conversationalHistory.size() - 1;
-		if (line.equals(Constants.SEPARATOR_OF_CONVERSATIONS)) {
-			conversationalHistory.get(indexOfLast).isLastInConversation = true;
-		} else {
-			int indexOfNewMsg = indexOfLast + 1;
-			ConversationalMessage newMessage = new ConversationalMessage(line, false);
-			newMessage.setVectorRepresentation(scoreSentence(newMessage.text));
-			conversationalHistory.put(indexOfNewMsg, newMessage);
-		}
 	}
 	
 	public static Double[] scoreSentence(String sentence) {

@@ -80,7 +80,7 @@ public class ResponseGenerator {
 	public static Map<Integer, ConversationalMessage> loadConversationalHistory() {
 		Map<Integer, ConversationalMessage> conversationalHistory = new HashMap<>();
 		try (Stream<String> lines = Files.lines(Paths.get(Constants.TRAINING_DATA_FILE), Charset.defaultCharset())) {
-			lines.forEachOrdered(line -> ConversationalMessage.appendMessageToHistory(line, conversationalHistory));
+			lines.forEachOrdered(line -> Util.appendMessageToHistory(line, conversationalHistory));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

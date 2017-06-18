@@ -19,4 +19,16 @@ public class Util {
 			System.out.println(conversationalHistory.get(index));
 		}
 	}
+	
+	public static void appendMessageToHistory(String line, Map<Integer, ConversationalMessage> conversationalHistory) {
+		int indexOfLast = conversationalHistory.size() - 1;
+		if (line.equals(Constants.SEPARATOR_OF_CONVERSATIONS)) {
+			conversationalHistory.get(indexOfLast).isLastInConversation = true;
+		} else {
+			int indexOfNewMsg = indexOfLast + 1;
+			ConversationalMessage newMessage = new ConversationalMessage(line, false);
+			newMessage.setVectorRepresentation(ConversationalMessage.scoreSentence(newMessage.text));
+			conversationalHistory.put(indexOfNewMsg, newMessage);
+		}
+	}
 }
