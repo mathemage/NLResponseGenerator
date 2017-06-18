@@ -101,6 +101,5 @@ ENV/
 .mypy_cache/
 
 # user-defined
-data/
 .idea/
-*.iml
+/resources/
