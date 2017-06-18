@@ -1,11 +1,21 @@
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
 /**
  * @author mathemage <ha@h2o.ai>
  *         created on 18.6.17
  */
 public class ResponseGenerator {
-	private static final String mockStarter = "The thing is, Cameron -- I'm at the mercy of a particularly hideous breed of loser. " +
-		"My sister. I can't date until she does. ";
+	private static final String mockStarter = "The thing is, Cameron --" +
+		"I'm at the mercy of a particularly hideous breed of loser. My sister. I can't date until she does. ";
 	private static final Double[] mockVector = new Double[]{1.0, 2.0, 3.14159, 4.0};
+	// TODO set as parameter
+	private static final String trainingDataFile = "../resources/movie_text_with_separators.txt";
 	
 	private static void generateResponses(String starterSentence) {
 		// score the sentence -> vec
@@ -20,7 +30,7 @@ public class ResponseGenerator {
 	
 	private static Double[] getScoreSentence(String sentence) {
 		// TODO replace mock
-		System.out.println("[MOCK] scoring sentece: \"" + sentence + "\"");
+		System.out.println("[MOCK] scoring sentence: \"" + sentence + "\"");
 		return mockVector;
 	}
 	
@@ -67,6 +77,15 @@ public class ResponseGenerator {
 	}*/
 	
 	public static void main(String[] args) {
+		Map<Integer, ConversationalMessage> conversationalHistory = new HashMap<>();
+		try (Stream<String> lines = Files.lines(Paths.get(trainingDataFile), Charset.defaultCharset())) {
+			lines.forEachOrdered(line -> ConversationalMessage.appendMessageToHistory(line, conversationalHistory));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Util.printConversationalHistory(conversationalHistory);
+		
 		generateResponses(mockStarter);
 	}
+	
 }
