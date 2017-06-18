@@ -10,17 +10,24 @@ import java.util.stream.Stream;
  * @author mathemage <ha@h2o.ai>
  *         created on 18.6.17
  */
-public class ResponseGenerator {
-	
-	private static void generateResponses(String starterSentence) {
+class ResponseGenerator {
+
+	private final Map<Integer, ConversationalMessage> conversationalHistory;
+
+	ResponseGenerator() {
+		conversationalHistory = this.loadConversationalHistory();
+	}
+
+	String generateResponses(String starterSentence) {
 		// score the sentence -> vec
 		Double[] starterVector = getScoreSentence(starterSentence);
 		System.out.print("[MOCK] got score: ");
 		Util.printVector(starterVector);
 		
 		// "k-NN": priority queue
-		
+
 		// get responses
+		return NextResponse.getNextMessage(this.conversationalHistory, 3);
 	}
 	
 	private static Double[] getScoreSentence(String sentence) {
@@ -70,14 +77,8 @@ public class ResponseGenerator {
 			std::cout << "Query word? ";
 		}
 	}*/
-	
-	public static void main(String[] args) {
-		Map<Integer, ConversationalMessage> conversationalHistory = loadConversationalHistory();
-		
-		generateResponses(Constants.MOCK_STARTER);
-	}
-	
-	public static Map<Integer, ConversationalMessage> loadConversationalHistory() {
+
+	private Map<Integer, ConversationalMessage> loadConversationalHistory() {
 		Map<Integer, ConversationalMessage> conversationalHistory = new HashMap<>();
 		try (Stream<String> lines = Files.lines(Paths.get(Constants.TRAINING_DATA_FILE), Charset.defaultCharset())) {
 			lines.forEachOrdered(line -> Util.appendMessageToHistory(line, conversationalHistory));
