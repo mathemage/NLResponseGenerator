@@ -18,16 +18,23 @@ public class ConversationalMessage {
 	public static void appendMessageToHistory(String line, Map<Integer, ConversationalMessage> conversationalHistory) {
 		// TODO if we hit the dashes, the previous message was the last one of the dialogue
 		int indexOfLast = conversationalHistory.size() - 1;
-		if (line.equals("------------")) {
+		if (line.equals(Constants.SEPARATOR_OF_CONVERSATIONS)) {
 			conversationalHistory.get(indexOfLast).isLastInConversation = true;
 		} else {
 			int indexOfNewMsg = indexOfLast + 1;
-			conversationalHistory.put(indexOfNewMsg, new ConversationalMessage(line, false));
+			ConversationalMessage newMessage = new ConversationalMessage(line, false);
+			newMessage.setVectorRepresentation(Constants.MOCK_VECTOR);
+			conversationalHistory.put(indexOfNewMsg, newMessage);
 		}
+	}
+	
+	public void setVectorRepresentation(Double[] vectorRepresentation) {
+		this.vectorRepresentation = vectorRepresentation;
 	}
 	
 	@Override
 	public String toString() {
-		return text + " " + Arrays.toString(vectorRepresentation) + (isLastInConversation ? ("\n" + "------------") : "");
+		return text + " " + Arrays.toString(vectorRepresentation) +
+			(isLastInConversation ? ("\n" + Constants.SEPARATOR_OF_CONVERSATIONS) : "");
 	}
 }
