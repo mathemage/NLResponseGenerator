@@ -16,16 +16,24 @@ public class ConversationalMessage {
 	}
 	
 	public static void appendMessageToHistory(String line, Map<Integer, ConversationalMessage> conversationalHistory) {
-		// TODO if we hit the dashes, the previous message was the last one of the dialogue
 		int indexOfLast = conversationalHistory.size() - 1;
 		if (line.equals(Constants.SEPARATOR_OF_CONVERSATIONS)) {
 			conversationalHistory.get(indexOfLast).isLastInConversation = true;
 		} else {
 			int indexOfNewMsg = indexOfLast + 1;
 			ConversationalMessage newMessage = new ConversationalMessage(line, false);
-			newMessage.setVectorRepresentation(Constants.MOCK_VECTOR);
+			newMessage.setVectorRepresentation(scoreSentence(newMessage.text));
 			conversationalHistory.put(indexOfNewMsg, newMessage);
 		}
+	}
+	
+	public static Double[] scoreSentence(String sentence) {
+		/* TODO replace mock with actual engines:
+		 * - RNN
+		 * - fastText
+		 * - sentence similarity via basic NLP approches
+		 * */
+		return Constants.MOCK_VECTOR;
 	}
 	
 	public void setVectorRepresentation(Double[] vectorRepresentation) {
