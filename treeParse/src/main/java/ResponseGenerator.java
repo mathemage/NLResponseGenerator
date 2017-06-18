@@ -11,10 +11,7 @@ public class ResponseGenerator {
 		// score the sentence -> vec
 		Double[] starterVector = getScoreSentence(starterSentence);
 		System.out.print("[MOCK] got score: ");
-		for (Double value : starterVector) {
-			System.out.print(value + " ");
-		}
-		System.out.println();
+		Util.printVector(starterVector);
 		
 		// "k-NN": priority queue
 		
