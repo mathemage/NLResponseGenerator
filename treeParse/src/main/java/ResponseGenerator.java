@@ -12,15 +12,54 @@ import java.util.stream.Stream;
  */
 public class ResponseGenerator {
 	
-	private static void generateResponses(String starterSentence) {
+	private static Map<Integer, ConversationalMessage> conversationalHistory;
+	
+	private static void generateResponses(String inputSentence) {
 		// score the sentence -> vec
-		Double[] starterVector = getScoreSentence(starterSentence);
+		Double[] sentenceVector = getScoreSentence(inputSentence);
 		System.out.print("[MOCK] got score: ");
-		Util.printVector(starterVector);
+		Util.printVector(sentenceVector);
 		
 		// "k-NN": priority queue
+		int indexOfNearest = findNearestNeighbor(inputSentence, sentenceVector);
+		printNearestNeighbor(inputSentence, indexOfNearest);
 		
 		// get responses
+	}
+	
+	public static void printNearestNeighbor(String inputSentence, int indexOfNearest) {
+		System.out.println(inputSentence);
+		System.out.println(" -> ");
+		System.out.println(conversationalHistory.get(indexOfNearest).text);
+	}
+	
+	public static int findNearestNeighbor(String sentenceText, Double[] sentenceVector) {
+		Double minDist = 1000.0;
+		int minIndex = -1;
+		for (int index = 0; index < conversationalHistory.size(); index++) {
+			ConversationalMessage candidateNeighbor = conversationalHistory.get(index);
+			if (candidateNeighbor.isLastInConversation || candidateNeighbor.text.equals(sentenceText)) {
+				continue;
+			}
+			Double distance = getCosineDistance(sentenceVector, candidateNeighbor.vectorRepresentation);
+			if (distance < minDist) {
+				minDist = distance;
+				minIndex = index;
+			}
+		}
+		return minIndex;
+	}
+	
+	private static Double getCosineDistance(Double[] vectorA, Double[] vectorB) {
+		double dotProduct = 0.0;
+		double normA = 0.0;
+		double normB = 0.0;
+		for (int i = 0; i < vectorA.length; i++) {
+			dotProduct += vectorA[i] * vectorB[i];
+			normA += Math.pow(vectorA[i], 2);
+			normB += Math.pow(vectorB[i], 2);
+		}
+		return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 	}
 	
 	private static Double[] getScoreSentence(String sentence) {
@@ -78,13 +117,13 @@ public class ResponseGenerator {
 	}
 	
 	public static Map<Integer, ConversationalMessage> loadConversationalHistory() {
-		Map<Integer, ConversationalMessage> conversationalHistory = new HashMap<>();
+		conversationalHistory = new HashMap<>();
 		try (Stream<String> lines = Files.lines(Paths.get(Constants.TRAINING_DATA_FILE), Charset.defaultCharset())) {
 			lines.forEachOrdered(line -> Util.appendMessageToHistory(line, conversationalHistory));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Util.printConversationalHistory(conversationalHistory);
+//		Util.printConversationalHistory(conversationalHistory);
 		return conversationalHistory;
 	}
 	
