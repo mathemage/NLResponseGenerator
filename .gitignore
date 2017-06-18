@@ -103,3 +103,4 @@ ENV/
 # user-defined
 .idea/
 /resources/
+/treeParse/.gradle/
